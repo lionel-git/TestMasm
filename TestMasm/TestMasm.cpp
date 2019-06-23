@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <immintrin.h>
 #include <Windows.h>
 
 
@@ -24,6 +25,31 @@ void test_rdtsc()
 	Sleep(1000);
 	auto end = rdtsc_asm();
 	std::cout << (end - start) / (double)(1e6) << " Mhz" << std::endl;
+}
+
+
+
+int test_intrinsic() 
+{
+	__m256i hello;
+	// Construction from scalars or literals.
+	__m256d a = _mm256_set_pd(1.0, 2.0, 3.0, 4.0);
+
+	// Does GCC generate the correct mov, or (better yet) elide the copy
+	// and pass two of the same register into the add? Let's look at the assembly.
+	__m256d b = a;
+
+	// Add the two vectors, interpreting the bits as 4 double-precision
+	// floats.
+	__m256d c = _mm256_add_pd(a, b);
+
+	// Do we ever touch DRAM or will these four be registers?
+	alignas(32) double output[4];
+	_mm256_store_pd(output, c);
+
+	printf("%f %f %f %f\n",
+		output[0], output[1], output[2], output[3]);
+	return 0;
 }
 
 /*
@@ -73,6 +99,9 @@ int main()
 {
 	auto ret = _set_se_translator(my_seh_translator);	
 	try {
+		test_intrinsic();
+
+
 		const int64_t test_value = 0x123456789A;
 		std::cout << std::hex << test1_asm(test_value) << std::endl;
 		auto ret = test2_asm(0x1u << 31);

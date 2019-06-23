@@ -5,7 +5,8 @@ PUBLIC test2_asm
 PUBLIC test_crc_asm
 
 _DATA SEGMENT	
-	myval db 'a'
+	myval dq 'abcdefgh', 'abcdefgh','abcdefgh','abcdefgh' ; dq = 8 bytes, db = 1 byte, dd = 4 bytes, dw = 2 bytes 
+	myval2 db 'b'
 _DATA ENDS
 
 _TEXT SEGMENT
@@ -76,6 +77,8 @@ test2_asm PROC
 	
 	rdrand rax
 
+	vmovupd     ymm0,myval
+
 	; rdseed rax ; not supported
 	;VPCOMPRESSB xmm1, xmm2 ; avx-512 test
 
@@ -86,7 +89,7 @@ test2_asm ENDP
 ; rcx = input
 test_crc_asm PROC
 	xor eax, eax
-	CRC32 eax, myval
+	CRC32 eax, myval2
 	
 	xor eax, eax
 	CRC32 eax, byte ptr [rcx + 0] ; 1
