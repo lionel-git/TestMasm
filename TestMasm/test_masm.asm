@@ -79,6 +79,8 @@ test2_asm PROC
 
 	vmovupd     ymm0,myval
 
+	vpxor ymm0,ymm0, ymm1
+
 	; rdseed rax ; not supported
 	;VPCOMPRESSB xmm1, xmm2 ; avx-512 test
 

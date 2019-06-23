@@ -31,7 +31,7 @@ void test_rdtsc()
 
 int test_intrinsic() 
 {
-	__m256i hello;
+//	__m256i hello;
 	// Construction from scalars or literals.
 	__m256d a = _mm256_set_pd(1.0, 2.0, 3.0, 4.0);
 
